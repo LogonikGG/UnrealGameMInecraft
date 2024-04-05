@@ -1,0 +1,29 @@
+name: UnrealMinecraft
+version: '${project.version}'
+main: ru.logonik.unrealminecraft.Plugin
+authors: [ Logonik ]
+description: Plugin made by Logonik
+website: https://www.youtube.com/channel/UCBXCB0ZVjkJwrgf1sPHvqcw
+commands:
+  unreal:
+    usage: /<command>
+    description: base command for unreal minecraft plugin
+permissions:
+  unrealminecraft.*:
+    default: op
+    children:
+      unrealminecraft.admin.*: true
+      unrealminecraft.admin: true
+      unrealminecraft.user.*: true
+      unrealminecraft.user: true
+  unrealminecraft.user:
+    default: true
+  unrealminecraft.user.*:
+    default: true
+  unrealminecraft.admin.*:
+    default: op
+    children:
+      unrealminecraft.admin: true
+      unrealminecraft.admin.arena: true
+  unrealminecraft.admin:
+    default: op

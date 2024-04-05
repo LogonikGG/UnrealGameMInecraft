@@ -1,0 +1,30 @@
+lobbby_location:
+  world: "world"
+  x: 1
+  y: 10
+  z: 1
+  yaw: 0
+  pitch: 0
+arenas:
+  first: # name
+    bases:
+      first: # name
+        spawns:
+
+      seconds: # name
+        spawns:
+    points:
+      first:
+        location:
+          world:
+          x:
+          y:
+          z:
+        spawns:
+          world:
+          x:
+          y:
+          z:
+          yaw:
+          pitch:
+

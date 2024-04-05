@@ -1,0 +1,5 @@
+exception:
+  unknown_error: "&cНеизвестная ошибка!"
+result:
+  success: "&aУспех!"
+util:

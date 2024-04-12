@@ -11,6 +11,7 @@ import org.bukkit.scheduler.BukkitTask;
 import ru.logonik.unrealminecraft.arenasmodels.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GameArena implements Listener {
     private final HashMap<Gamer, Team> players;
@@ -73,7 +74,7 @@ public class GameArena implements Listener {
             Location location = gamer.getPlayer().getLocation();
             for (AbstractGameSpot spot : spots.values()) {
                 for (SpawnPointAbstract point : spot.getItemsPoints()) {
-                    if(location.distance(point.getLocation())<2) {
+                    if (location.distance(point.getLocation()) < 2) {
                         point.onTryTakeEvent(new TakeProductsEvent(gamer));
                     }
                 }
@@ -315,5 +316,9 @@ public class GameArena implements Listener {
 
     public void setGameCore(GameCore gameCore) {
         this.gameCore = gameCore;
+    }
+
+    public List<String> getTeamList() {
+        return teams.stream().map(Team::getName).collect(Collectors.toList());
     }
 }

@@ -56,7 +56,7 @@ public class SlimeInteractGameSpot implements Listener {
     @EventHandler
     public void playerMoveEvent(PlayerMoveEvent e) {
         Gamer gamer = arena.getGameCore().tryGetGamer(e.getPlayer());
-        if (gamer != null) {
+        if (gamer != null && gamer.getTeam() != null) {
             if (gameSpot.getOwner() == null) {
                 Location to = e.getTo();
                 double distance = gameSpot.getLocation().distance(to);

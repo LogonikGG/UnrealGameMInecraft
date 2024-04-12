@@ -22,12 +22,13 @@ public class Creater extends SubCommandAbstract {
 
     private final String CONTEXT = "context";
     private final String ARENA = "arena";
+    private final String TEAM = "team";
     private final String SPOT = "spot";
     private final String POINT = "point";
     private final String CONNECTION = "connection";
     private final String REMOVE = "remove";
     private final String INFO = "info";
-    private final List<String> firstArgs = Arrays.asList(CONTEXT, ARENA, SPOT, POINT, CONNECTION, REMOVE, INFO);
+    private final List<String> firstArgs = Arrays.asList(CONTEXT, ARENA, TEAM, SPOT, POINT, CONNECTION, REMOVE, INFO);
     private final List<String> secondArgsContext = Arrays.asList(ARENA, SPOT, POINT);
 
     private final String BASESPOT = "basespot";
@@ -40,7 +41,7 @@ public class Creater extends SubCommandAbstract {
     private final String HORSE_POINT = "horse_point";
     private final String ITEM_POINT = "item_point";
     private final List<String> secondArgsPoint = Arrays.asList(SPAWN_PLACE, ARMOR_POINT, HEAL_POINT, HORSE_POINT);
-    private final List<String> secondArgsRemove = Arrays.asList(ARENA, SPOT, SPAWN_PLACE, ITEM_POINT, CONNECTION);
+    private final List<String> secondArgsRemove = Arrays.asList(ARENA, TEAM, SPOT, SPAWN_PLACE, ITEM_POINT, CONNECTION);
 
     public Creater(Plugin plugin) {
         super("unrealminecraft.admin", LangCode.UNKNOWN_ERROR);
@@ -119,6 +120,16 @@ public class Creater extends SubCommandAbstract {
                 String name = Util.getString(args, 2);
                 return plugin.getGameCore().createArena(player.getLocation(), name);
             }
+            case TEAM: {
+                if (storage.arena == null) {
+                    return new Result(false, LangCode.UNKNOWN_ERROR);
+                }
+                String name = Util.getString(args, 2);
+                if(name.isEmpty()) {
+                    return new Result(false, LangCode.UNKNOWN_ERROR);
+                }
+                return storage.arena.createTeam(name);
+            }
             case SPOT: {
                 if (storage.arena == null) {
                     return new Result(false, LangCode.UNKNOWN_ERROR);
@@ -192,6 +203,13 @@ public class Creater extends SubCommandAbstract {
                         String name = Util.getString(args, 3);
                         return plugin.getGameCore().removeArena(name);
                     }
+                    case TEAM: {
+                        if (storage.arena == null) {
+                            return new Result(false, LangCode.UNKNOWN_ERROR);
+                        }
+                        String name = Util.getString(args, 3);
+                        return storage.arena.removeTeam(name);
+                    }
                     case SPOT: {
                         if (storage.arena == null) {
                             return new Result(false, LangCode.UNKNOWN_ERROR);
@@ -253,8 +271,8 @@ public class Creater extends SubCommandAbstract {
                 player.sendMessage(arenasNames);
                 if (storage.arena != null) {
                     player.sendMessage("Название арены: " + storage.arena.getName());
-                    String spotsNames = Util.getString(storage.arena.getGameSpots().keySet(), ", ");
-                    player.sendMessage("Название спотов: " + spotsNames);
+                    player.sendMessage("Название спотов: " + String.join(", ", storage.arena.getGameSpots().keySet()));
+                    player.sendMessage("Название команд: " + String.join(", ", storage.arena.getTeamList()));
                 }
                 if (storage.spot != null) {
                     player.sendMessage("Название спота: " + storage.spot.getName());
@@ -337,11 +355,18 @@ public class Creater extends SubCommandAbstract {
                                 StringUtil.copyPartialMatches(args[3], plugin.getGameCore().getArenasNames(), completions);
                                 return;
                             }
+                            case TEAM: {
+                                if (storage.arena == null) {
+                                    return;
+                                }
+                                StringUtil.copyPartialMatches(args[3], storage.arena.getTeamList(), completions);
+                                return;
+                            }
                             case SPOT: {
                                 if (storage.arena == null) {
                                     return;
                                 }
-                                StringUtil.copyPartialMatches(args[2], storage.arena.getGameSpots().keySet(), completions);
+                                StringUtil.copyPartialMatches(args[3], storage.arena.getGameSpots().keySet(), completions);
                                 return;
                             }
                             case SPAWN_PLACE: {
@@ -362,7 +387,7 @@ public class Creater extends SubCommandAbstract {
                                 if (storage.arena == null || storage.spot == null) {
                                     return;
                                 }
-                                StringUtil.copyPartialMatches(args[2], storage.arena.getGameSpots().keySet(), completions);
+                                StringUtil.copyPartialMatches(args[3], storage.arena.getGameSpots().keySet(), completions);
                             }
                         }
                     }

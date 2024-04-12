@@ -32,7 +32,7 @@ public class MiddleSpot extends AbstractGameSpot {
                 }
             }
         }
-        //todo respawn only if we have connection from base
+        //fixme respawn only if we have connection from base ?
         canRespawnHere.add(owner);
     }
 

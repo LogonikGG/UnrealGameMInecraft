@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import ru.logonik.unrealminecraft.Plugin;
 import ru.logonik.unrealminecraft.commands.SubCommandAbstract;
+import ru.logonik.unrealminecraft.models.GameArena;
 import ru.logonik.unrealminecraft.models.LangCode;
 import ru.logonik.unrealminecraft.models.Result;
 import ru.logonik.unrealminecraft.util.Util;
@@ -33,8 +34,15 @@ public class ChooseTeam extends SubCommandAbstract {
 
     @Override
     public void onTabComplete(CommandSender sender, String[] args, ArrayList<String> completions) {
+        if (!(sender instanceof Player)) {
+            return;
+        }
+        GameArena arena = plugin.getGameCore().getArena((Player) sender);
+        if (arena == null) {
+            return;
+        }
         if (args.length == 2) {
-            StringUtil.copyPartialMatches(args[1], plugin.getGameCore().getArenasNames(), completions);
+            StringUtil.copyPartialMatches(args[1], arena.getTeamList(), completions);
         }
     }
 }

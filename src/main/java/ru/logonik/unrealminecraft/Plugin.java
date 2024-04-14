@@ -46,7 +46,7 @@ public final class Plugin extends JavaPlugin {
         saveResource("messages.yml", false);
         language = new YamlConfiguration();
         language.load(new File(getDataFolder(), "messages.yml"));
-
+// new code
         new CommandUnrealMinecraft(this);
     }
 

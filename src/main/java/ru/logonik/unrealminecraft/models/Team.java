@@ -5,7 +5,6 @@ import org.bukkit.Location;
 public class Team {
     private String name;
     private int score;
-    private Location spawn;
 
     public Team(String name) {
         this.name = name;
@@ -25,13 +24,5 @@ public class Team {
 
     public void setScore(int score) {
         this.score = score;
-    }
-
-    public Location getSpawn() {
-        return spawn;
-    }
-
-    public void setSpawn(Location spawn) {
-        this.spawn = spawn;
     }
 }

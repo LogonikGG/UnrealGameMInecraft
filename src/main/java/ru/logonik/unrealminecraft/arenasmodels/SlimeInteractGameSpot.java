@@ -12,6 +12,8 @@ import ru.logonik.unrealminecraft.models.GameArena;
 import ru.logonik.unrealminecraft.models.Gamer;
 import ru.logonik.unrealminecraft.models.Team;
 
+import java.util.Objects;
+
 public class SlimeInteractGameSpot implements Listener {
     private final AbstractGameSpot gameSpot;
     private final GameArena arena;
@@ -24,6 +26,7 @@ public class SlimeInteractGameSpot implements Listener {
     }
 
     public void regenerate(Team team) {
+        Objects.requireNonNull(team);
         gameSpot.setOwner(team);
 
         final Location location = gameSpot.getLocation();

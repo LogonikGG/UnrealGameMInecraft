@@ -124,11 +124,14 @@ public class Creater extends SubCommandAbstract {
                 if (storage.arena == null) {
                     return new Result(false, LangCode.UNKNOWN_ERROR);
                 }
+                if (!(storage.spot instanceof BaseSpot)) {
+                    return new Result(false, LangCode.UNKNOWN_ERROR);
+                }
                 String name = Util.getString(args, 2);
                 if(name.isEmpty()) {
                     return new Result(false, LangCode.UNKNOWN_ERROR);
                 }
-                return storage.arena.createTeam(name);
+                return storage.arena.createTeam(name, (BaseSpot) storage.spot);
             }
             case SPOT: {
                 if (storage.arena == null) {

@@ -18,7 +18,7 @@ public class GameArena implements Listener {
     private HashMap<String, AbstractGameSpot> spots;
     private final HashMap<AbstractGameSpot, SlimeInteractGameSpot> interactedSpots;
     private GameCore gameCore;
-    private final ArrayList<Team> teams;
+    private final HashMap<Team, BaseSpot> teams;
     private final String name;
     private final Location arenaLobby;
     private BukkitTask gameTickTask;
@@ -27,7 +27,7 @@ public class GameArena implements Listener {
         this.gameCore = core;
         this.spots = new HashMap<>();
         this.players = new HashMap<>();
-        this.teams = new ArrayList<>();
+        this.teams = new HashMap<>();
         this.interactedSpots = new HashMap<>();
         this.name = name;
         this.arenaLobby = location;
@@ -128,18 +128,18 @@ public class GameArena implements Listener {
         return new Result(true, LangCode.SUCCESS);
     }
 
-    public Result createTeam(String name) {
-        for (Team team : teams) {
+    public Result createTeam(String name, BaseSpot baseSpot) {
+        for (Team team : teams.keySet()) {
             if (team.getName().equals(name)) {
                 return new Result(false, LangCode.UNKNOWN_ERROR);
             }
         }
-        teams.add(new Team(name));
+        teams.put(new Team(name), baseSpot);
         return new Result(true, LangCode.SUCCESS);
     }
 
     public Result removeTeam(String name) {
-        for (Team team : teams) {
+        for (Team team : teams.keySet()) {
             if (team.getName().equals(name)) {
                 teams.remove(team);
                 return new Result(true, LangCode.SUCCESS);
@@ -170,7 +170,7 @@ public class GameArena implements Listener {
     }
 
     public Team getTeam(String teamName) {
-        for (Team team : teams) {
+        for (Team team : teams.keySet()) {
             if (team.getName().equals(teamName)) {
                 return team;
             }
@@ -319,6 +319,6 @@ public class GameArena implements Listener {
     }
 
     public List<String> getTeamList() {
-        return teams.stream().map(Team::getName).collect(Collectors.toList());
+        return teams.keySet().stream().map(Team::getName).collect(Collectors.toList());
     }
 }

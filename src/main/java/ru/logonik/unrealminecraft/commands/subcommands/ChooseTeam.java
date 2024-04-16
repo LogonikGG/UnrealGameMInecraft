@@ -25,7 +25,7 @@ public class ChooseTeam extends SubCommandAbstract {
         if (!(sender instanceof Player)) {
             return new Result(false, LangCode.UNKNOWN_ERROR);
         }
-        if (args.length < 3) {
+        if (args.length < 2) {
             return new Result(false, LangCode.UNKNOWN_ERROR);
         }
         String name = Util.getString(args, 1);

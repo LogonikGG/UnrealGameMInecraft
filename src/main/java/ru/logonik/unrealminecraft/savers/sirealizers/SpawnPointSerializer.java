@@ -12,6 +12,7 @@ import ru.logonik.unrealminecraft.arenasmodels.SpawnPointAbstract;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SpawnPointSerializer implements JsonDeserializer<SpawnPointAbstract>, JsonSerializer<SpawnPointAbstract> {
 
@@ -31,7 +32,8 @@ public class SpawnPointSerializer implements JsonDeserializer<SpawnPointAbstract
         if (src instanceof ArmorSpawnPoint) {
             ArmorSpawnPoint point = (ArmorSpawnPoint) src;
             result.addProperty("type", ARMOR_POINT);
-            result.add("items", context.serialize(point.getItemStacks()));
+            Type itemsTypeArray = new TypeToken<List<ItemStack>>() {}.getType();
+            result.add("items", context.serialize(point.getItemStacks(), itemsTypeArray));
         } else if (src instanceof HealSpawnPoint) {
             HealSpawnPoint point = (HealSpawnPoint) src;
             result.addProperty("type", HEAL_POINT);
@@ -56,7 +58,7 @@ public class SpawnPointSerializer implements JsonDeserializer<SpawnPointAbstract
         Location location = context.deserialize(object.get("location"), Location.class);
         switch (type) {
             case ARMOR_POINT: {
-                Type itemsTypeArray = new TypeToken<ArrayList<ItemStack>>() {}.getType();
+                Type itemsTypeArray = new TypeToken<List<ItemStack>>() {}.getType();
                 ArrayList<ItemStack> items = context.deserialize(object.get("items"), itemsTypeArray);
                 return new ArmorSpawnPoint(location, null, items, interval);
             }

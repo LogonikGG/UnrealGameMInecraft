@@ -171,6 +171,7 @@ public class Creater extends SubCommandAbstract {
                             return new Result(false, LangCode.UNKNOWN_ERROR);
                         }
                         ArrayList<ItemStack> list = new ArrayList<>();
+                        list.add(is);
                         storage.spot.addItemPoint(new ArmorSpawnPoint(player.getLocation(), storage.spot, list, 15*20));
                         return new Result(false, LangCode.SUCCESS);
                     }

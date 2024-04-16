@@ -6,18 +6,17 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
 import ru.logonik.unrealminecraft.Plugin;
 import ru.logonik.unrealminecraft.arenasmodels.AbstractGameSpot;
 import ru.logonik.unrealminecraft.arenasmodels.SpawnPointAbstract;
 import ru.logonik.unrealminecraft.models.GameArena;
 import ru.logonik.unrealminecraft.models.GameCore;
-import ru.logonik.unrealminecraft.savers.sirealizers.GameArenaSerializer;
-import ru.logonik.unrealminecraft.savers.sirealizers.GameSpotSerializer;
-import ru.logonik.unrealminecraft.savers.sirealizers.LocationSerializer;
-import ru.logonik.unrealminecraft.savers.sirealizers.SpawnPointSerializer;
+import ru.logonik.unrealminecraft.savers.sirealizers.*;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.List;
 
 public class Json implements ISaver {
     private final Plugin plugin;
@@ -33,6 +32,8 @@ public class Json implements ISaver {
         gsonBuilder.registerTypeAdapter(AbstractGameSpot.class, new GameSpotSerializer(plugin));
         gsonBuilder.registerTypeAdapter(Location.class, new LocationSerializer(plugin));
         gsonBuilder.registerTypeAdapter(SpawnPointAbstract.class, new SpawnPointSerializer(plugin));
+        //gsonBuilder.registerTypeAdapter(new TypeToken<ItemStack>() {}.getType(), new ItemStackSerializer());
+        gsonBuilder.registerTypeAdapter(new TypeToken<List<ItemStack>>() {}.getType(), new ItemStacksSerializer());
         this.gson = gsonBuilder.create();
     }
 

@@ -125,6 +125,7 @@ public class GameArena implements Listener {
         Objects.requireNonNull(player);
         Objects.requireNonNull(team);
         players.put(player, team);
+        player.setTeam(team);
         return new Result(true, LangCode.SUCCESS);
     }
 
@@ -148,14 +149,15 @@ public class GameArena implements Listener {
         return new Result(false, LangCode.UNKNOWN_ERROR);
     }
 
-    public Result joinTeam(Gamer player, String teamName) {
-        Objects.requireNonNull(player);
+    public Result joinTeam(Gamer gamer, String teamName) {
+        Objects.requireNonNull(gamer);
         Objects.requireNonNull(teamName);
         Team team = getTeam(teamName);
         if (team == null) {
             return new Result(false, LangCode.UNKNOWN_ERROR);
         }
-        players.put(player, team);
+        players.put(gamer, team);
+        gamer.setTeam(team);
         return new Result(true, LangCode.SUCCESS);
     }
 
@@ -166,6 +168,7 @@ public class GameArena implements Listener {
             return new Result(false, LangCode.UNKNOWN_ERROR);
         }
         players.put(gamer, null);
+        gamer.setTeam(null);
         return new Result(true, LangCode.SUCCESS);
     }
 

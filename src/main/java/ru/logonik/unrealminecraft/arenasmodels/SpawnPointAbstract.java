@@ -36,7 +36,7 @@ public abstract class SpawnPointAbstract {
     protected abstract void spawnTick();
 
     public void onTryTakeEvent(TakeProductsEvent e) {
-        if (isSpawned && e.getGamer().getTeam().equals(gameSpot.getOwner())) {
+        if (isSpawned && e.getGamer().getTeam() != null && e.getGamer().getTeam().equals(gameSpot.getOwner())) {
             onTryTakeByOwner(e);
             if (e.isSuccess()) {
                 untilNextSpawnRaid = intervalSpawn;

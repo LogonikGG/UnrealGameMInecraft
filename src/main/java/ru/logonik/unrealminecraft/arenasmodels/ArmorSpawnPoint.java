@@ -33,7 +33,7 @@ public class ArmorSpawnPoint extends SpawnPointAbstract {
         this.visualItems = new ArrayList<>();
     }
 
-    public ArmorSpawnPoint(Location location, AbstractGameSpot gameSpot, long intervalSpawn, ArrayList<ItemStack> itemStacks) {
+    public ArmorSpawnPoint(Location location, AbstractGameSpot gameSpot, ArrayList<ItemStack> itemStacks, long intervalSpawn) {
         super(location, gameSpot, intervalSpawn);
         this.itemStacks = itemStacks;
         this.visualItems = new ArrayList<>();

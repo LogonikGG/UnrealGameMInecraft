@@ -58,7 +58,7 @@ public class SpawnPointSerializer implements JsonDeserializer<SpawnPointAbstract
             case ARMOR_POINT: {
                 Type itemsTypeArray = new TypeToken<ArrayList<ItemStack>>() {}.getType();
                 ArrayList<ItemStack> items = context.deserialize(object.get("items"), itemsTypeArray);
-                return new ArmorSpawnPoint(location, null, interval, items);
+                return new ArmorSpawnPoint(location, null, items, interval);
             }
             case HEAL_POINT: {
                 return new HealSpawnPoint(location, null, interval);

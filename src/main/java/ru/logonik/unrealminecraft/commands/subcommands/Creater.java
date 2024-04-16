@@ -171,15 +171,15 @@ public class Creater extends SubCommandAbstract {
                             return new Result(false, LangCode.UNKNOWN_ERROR);
                         }
                         ArrayList<ItemStack> list = new ArrayList<>();
-                        storage.spot.addItemPoint(new ArmorSpawnPoint(player.getLocation(), storage.spot, list));
+                        storage.spot.addItemPoint(new ArmorSpawnPoint(player.getLocation(), storage.spot, list, 15*20));
                         return new Result(false, LangCode.SUCCESS);
                     }
                     case HEAL_POINT: {
-                        storage.spot.addItemPoint(new HealSpawnPoint(player.getLocation(), storage.spot));
+                        storage.spot.addItemPoint(new HealSpawnPoint(player.getLocation(), storage.spot, 15*20));
                         return new Result(false, LangCode.SUCCESS);
                     }
                     case HORSE_POINT: {
-                        storage.spot.addItemPoint(new HorseSpawnPoint(player.getLocation(), storage.spot));
+                        storage.spot.addItemPoint(new HorseSpawnPoint(player.getLocation(), storage.spot, 15*20));
                         return new Result(false, LangCode.SUCCESS);
                     }
                 }

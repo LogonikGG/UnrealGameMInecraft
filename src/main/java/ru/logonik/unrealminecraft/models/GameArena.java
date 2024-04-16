@@ -321,4 +321,10 @@ public class GameArena implements Listener {
     public List<String> getTeamList() {
         return teams.keySet().stream().map(Team::getName).collect(Collectors.toList());
     }
+
+    public HashMap<Team, BaseSpot> getTeams() {
+        return teams;
+    }
+
+
 }

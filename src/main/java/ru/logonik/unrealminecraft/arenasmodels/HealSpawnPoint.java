@@ -16,6 +16,7 @@ public class HealSpawnPoint extends SpawnPointAbstract {
         super(location, gameSpot, intervalSpawn);
     }
 
+
     public HealSpawnPoint(Location location, AbstractGameSpot gameSpot) {
         super(location, gameSpot, 0);
     }
@@ -46,5 +47,10 @@ public class HealSpawnPoint extends SpawnPointAbstract {
     @Override
     public void onReset() {
         visualItems.remove();
+    }
+
+    @Override
+    public void onStop() {
+        onReset();
     }
 }

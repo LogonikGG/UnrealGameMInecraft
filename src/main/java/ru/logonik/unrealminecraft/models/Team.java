@@ -1,6 +1,5 @@
 package ru.logonik.unrealminecraft.models;
 
-import org.bukkit.Location;
 
 public class Team {
     private String name;

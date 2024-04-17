@@ -44,6 +44,24 @@ public class GameArena implements Listener {
     }
 
     private void start() {
+        for (Map.Entry<Team, BaseSpot> entry : teams.entrySet()) {
+            entry.getValue().setOwner(entry.getKey());
+        }
+        for (AbstractGameSpot value : spots.values()) {
+            for (SpawnPointAbstract spawnPoint : value.getItemsPoints()) {
+                spawnPoint.setEnabled(true);
+                spawnPoint.forceSpawnTick();
+                if(spawnPoint instanceof Listener) {
+                    gameCore.getPlugin().getServer().getPluginManager().registerEvents((Listener) spawnPoint, gameCore.getPlugin());
+                }
+            }
+            SlimeInteractGameSpot interacted = new SlimeInteractGameSpot(value, this);
+            gameCore.getPlugin().getServer().getPluginManager().registerEvents(interacted, gameCore.getPlugin());
+            if (value.getOwner() != null) {
+                interacted.regenerate(value.getOwner());
+            }
+            interactedSpots.put(value, interacted);
+        }
         for (Gamer gamer : players.keySet()) {
             final Player player = gamer.getPlayer();
             player.teleport(getRespawnLocation(gamer));
@@ -51,15 +69,6 @@ public class GameArena implements Listener {
             player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
             player.setSaturation(5);
             player.setFoodLevel(20);
-        }
-        for (AbstractGameSpot value : spots.values()) {
-            for (SpawnPointAbstract spawnPoint : value.getItemsPoints()) {
-                spawnPoint.setEnabled(true);
-                spawnPoint.forceSpawnTick();
-            }
-            SlimeInteractGameSpot interacted = new SlimeInteractGameSpot(value, this);
-            gameCore.getPlugin().getServer().getPluginManager().registerEvents(interacted, gameCore.getPlugin());
-            interactedSpots.put(value, interacted);
         }
         gameTickTask = gameCore.getPlugin().getServer().getScheduler().runTaskTimer(gameCore.getPlugin(), this::gameTick, 2, 1);
     }
@@ -74,7 +83,7 @@ public class GameArena implements Listener {
             Location location = gamer.getPlayer().getLocation();
             for (AbstractGameSpot spot : spots.values()) {
                 for (SpawnPointAbstract point : spot.getItemsPoints()) {
-                    if (location.distance(point.getLocation()) < 2) {
+                    if (location.distance(point.getLocation()) < 1) {
                         point.onTryTakeEvent(new TakeProductsEvent(gamer));
                     }
                 }
@@ -105,7 +114,10 @@ public class GameArena implements Listener {
         }
         for (AbstractGameSpot value : spots.values()) {
             for (SpawnPointAbstract spawnPoint : value.getItemsPoints()) {
-                spawnPoint.reset();
+                spawnPoint.stop();
+                if(spawnPoint instanceof Listener) {
+                    HandlerList.unregisterAll((Listener) spawnPoint);
+                }
             }
         }
         for (SlimeInteractGameSpot value : interactedSpots.values()) {
@@ -246,9 +258,9 @@ public class GameArena implements Listener {
             for (Team team : value.getCanRespawnHere()) {
                 if (team.equals(gamer.getTeam())) {
                     if (value.getSpawns().size() == 0) continue;
+                    int i = new Random().nextInt(value.getSpawns().size());
+                    return value.getSpawns().get(i);
                 }
-                int i = new Random().nextInt(value.getSpawns().size());
-                return value.getSpawns().get(i);
             }
         }
         Bukkit.getLogger().severe("No spawn location found for gamer ");
@@ -257,7 +269,7 @@ public class GameArena implements Listener {
 
     public void gameSpotDestroyed(AbstractGameSpot gameSpot) {
         connectionsChanges();
-        broadcastToPlayers(gameSpot.getLocation().toString() + " сломан");
+        broadcastToPlayers(gameSpot.getName() + " сломан");
     }
 
     private void connectionsChanges() {
@@ -278,7 +290,7 @@ public class GameArena implements Listener {
 
     public void gameSpotGenerated(AbstractGameSpot gameSpot) {
         connectionsChanges();
-        broadcastToPlayers(gameSpot.getLocation().toString() + " сгенерирован");
+        broadcastToPlayers(gameSpot.getName() + " сгенерирован");
     }
 
     public Result createGameSpot(String name, Location location, boolean isBase) {

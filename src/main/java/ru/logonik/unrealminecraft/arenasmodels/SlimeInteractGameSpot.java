@@ -37,12 +37,13 @@ public class SlimeInteractGameSpot implements Listener {
         slime.setSize(4);
         slime.setAI(false);
         slime.setSilent(true);
-        slime.setCustomName(gameSpot.getOwner().getName());
+        slime.setCustomName(team.getName());
         arena.gameSpotGenerated(gameSpot);
     }
 
     @EventHandler
     public void onSlimeDeath(EntityDeathEvent e) {
+        if (slime == null) return;
         if (e.getEntity().getUniqueId().equals(slime.getUniqueId())) {
             gameSpot.setOwner(null);
             arena.gameSpotDestroyed(gameSpot);
@@ -51,7 +52,9 @@ public class SlimeInteractGameSpot implements Listener {
 
     @EventHandler
     public void onSlimeSplits(SlimeSplitEvent e) {
+        if (slime == null) return;
         if (e.getEntity().getUniqueId().equals(slime.getUniqueId())) {
+            slime = null;
             e.setCancelled(true);
         }
     }

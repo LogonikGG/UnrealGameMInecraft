@@ -1,6 +1,7 @@
 package ru.logonik.unrealminecraft.arenasmodels;
 
 import org.bukkit.Location;
+import ru.logonik.unrealminecraft.models.Team;
 
 public class BaseSpot extends AbstractGameSpot {
 
@@ -13,8 +14,13 @@ public class BaseSpot extends AbstractGameSpot {
         canBeDestroyBy.clear();
         canRespawnHere.clear();
         for (AbstractGameSpot connection : connections) {
-            canBeDestroyBy.add(connection.getOwner());
+            Team owner = connection.getOwner();
+            if (owner != null) {
+                canBeDestroyBy.add(owner);
+            }
         }
-        canRespawnHere.add(owner);
+        if (owner != null) {
+            canRespawnHere.add(owner);
+        }
     }
 }

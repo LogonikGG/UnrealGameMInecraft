@@ -27,13 +27,15 @@ public class MiddleSpot extends AbstractGameSpot {
             }
             final AbstractGameSpot base = tryFindConnectionToBaseRecursion(connection, cashRecursion);
             if (base != null) {
-                if (connection.getOwner() != null) {
+                if (base.getOwner() != null) {
                     canBeDestroyBy.add(base.getOwner());
                 }
             }
         }
         //fixme respawn only if we have connection from base ?
-        canRespawnHere.add(owner);
+        if (owner != null) {
+            canRespawnHere.add(owner);
+        }
     }
 
     private AbstractGameSpot tryFindConnectionToBaseRecursion(AbstractGameSpot gameSpot, ArrayList<AbstractGameSpot> cash) {

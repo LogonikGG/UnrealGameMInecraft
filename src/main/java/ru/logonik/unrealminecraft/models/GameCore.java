@@ -24,6 +24,7 @@ public class GameCore implements Listener {
 
     public GameCore(Plugin plugin) {
         this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
         arenas = new HashMap<>();
         gamers = new HashMap<>();
         associateTableGamers = new HashMap<>();

@@ -3,7 +3,7 @@ package ru.logonik.unrealminecraft.models;
 public class TakeProductsEvent {
 
     private final Gamer gamer;
-    private boolean success = false;
+    private boolean success = true;
 
     public TakeProductsEvent(Gamer gamer) {
         this.gamer = gamer;

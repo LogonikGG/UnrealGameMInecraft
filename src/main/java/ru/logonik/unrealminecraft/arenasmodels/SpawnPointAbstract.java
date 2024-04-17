@@ -12,7 +12,7 @@ public abstract class SpawnPointAbstract {
     private boolean isSpawned;
 
     public SpawnPointAbstract(Location location, AbstractGameSpot gameSpot, long intervalSpawn) {
-        this.location = location;
+        setLocation(location);
         this.intervalSpawn = intervalSpawn;
         this.gameSpot = gameSpot;
         this.enabled = false;
@@ -33,6 +33,14 @@ public abstract class SpawnPointAbstract {
         untilNextSpawnRaid = 0;
     }
 
+    public void reset() {
+        isSpawned = false;
+        untilNextSpawnRaid = intervalSpawn;
+        onReset();
+    }
+
+    public abstract void onReset();
+
     protected abstract void spawnTick();
 
     public void onTryTakeEvent(TakeProductsEvent e) {
@@ -52,6 +60,11 @@ public abstract class SpawnPointAbstract {
     }
 
     public void setLocation(Location location) {
+        location.setX(location.getBlockX()+0.5);
+        location.setY(location.getBlockY()+0.1);
+        location.setZ(location.getBlockZ()+0.5);
+        location.setPitch(0);
+        location.setYaw(0);
         this.location = location;
     }
 
@@ -79,13 +92,13 @@ public abstract class SpawnPointAbstract {
         isSpawned = spawned;
     }
 
-    public void reset() {
+    public void stop() {
         enabled = false;
         this.untilNextSpawnRaid = this.intervalSpawn;
-        onReset();
+        onStop();
     }
 
-    public abstract void onReset();
+    public abstract void onStop();
 
     public void setGameSpot(AbstractGameSpot gameSpot) {
         this.gameSpot = gameSpot;

@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import ru.logonik.unrealminecraft.models.Result;
 import ru.logonik.unrealminecraft.models.Team;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
 public abstract class AbstractGameSpot {
     protected final ArrayList<AbstractGameSpot> connections;
     protected final Location location;
+    @Nullable
     protected Team owner;
     private ArrayList<Location> spawns;
     protected ArrayList<SpawnPointAbstract> items;
@@ -33,11 +35,12 @@ public abstract class AbstractGameSpot {
         return location;
     }
 
+    @Nullable
     public Team getOwner() {
         return owner;
     }
 
-    public void setOwner(Team owner) {
+    public void setOwner(@Nullable Team owner) {
         this.owner = owner;
     }
 

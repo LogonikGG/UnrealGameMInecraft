@@ -40,6 +40,7 @@
                             <goal>shade</goal>
                         </goals>
                         <configuration>
+                            <outputDirectory>C:/Users/GG/Desktop/NowUsed/ServerMinecraft1.12.2/Server1.12.2Paper_empty/plugins/</outputDirectory>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                         </configuration>
                     </execution>

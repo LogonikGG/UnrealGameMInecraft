@@ -3,13 +3,16 @@ package ru.logonik.unrealminecraft.models;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.scheduler.BukkitTask;
 import ru.logonik.unrealminecraft.arenasmodels.*;
+import ru.logonik.unrealminecraft.util.Util;
 
+import javax.annotation.Nullable;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,33 +47,40 @@ public class GameArena implements Listener {
     }
 
     private void start() {
-        for (Map.Entry<Team, BaseSpot> entry : teams.entrySet()) {
-            entry.getValue().setOwner(entry.getKey());
-        }
-        for (AbstractGameSpot value : spots.values()) {
-            for (SpawnPointAbstract spawnPoint : value.getItemsPoints()) {
-                spawnPoint.setEnabled(true);
-                spawnPoint.forceSpawnTick();
-                if(spawnPoint instanceof Listener) {
-                    gameCore.getPlugin().getServer().getPluginManager().registerEvents((Listener) spawnPoint, gameCore.getPlugin());
-                }
-            }
-            SlimeInteractGameSpot interacted = new SlimeInteractGameSpot(value, this);
-            gameCore.getPlugin().getServer().getPluginManager().registerEvents(interacted, gameCore.getPlugin());
-            if (value.getOwner() != null) {
-                interacted.regenerate(value.getOwner());
-            }
-            interactedSpots.put(value, interacted);
-        }
+        preparingSpots();
         for (Gamer gamer : players.keySet()) {
             final Player player = gamer.getPlayer();
             player.teleport(getRespawnLocation(gamer));
             player.sendMessage("СТАРТ");
-            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            player.setSaturation(5);
-            player.setFoodLevel(20);
+            Util.normalizePlayer(player);
         }
         gameTickTask = gameCore.getPlugin().getServer().getScheduler().runTaskTimer(gameCore.getPlugin(), this::gameTick, 2, 1);
+    }
+
+    private void preparingSpots() {
+        for (AbstractGameSpot gameSpot : spots.values()) {
+            for (SpawnPointAbstract spawnPoint : gameSpot.getItemsPoints()) {
+                spawnPoint.setEnabled(true);
+                spawnPoint.forceSpawnTick();
+                if (spawnPoint instanceof Listener) {
+                    gameCore.getPlugin().getServer().getPluginManager().registerEvents((Listener) spawnPoint, gameCore.getPlugin());
+                }
+            }
+            SlimeInteractGameSpot interacted;
+            if(gameSpot instanceof BaseSpot) {
+                interacted = new BaseSpotSlime(gameSpot, this);
+            } else if(gameSpot instanceof MiddleSpot) {
+                interacted = new MiddleSpotSlime(gameSpot, this);
+            } else {
+                throw new IllegalStateException("Unknown type of spot");
+            }
+            gameCore.getPlugin().getServer().getPluginManager().registerEvents(interacted, gameCore.getPlugin());
+            interactedSpots.put(gameSpot, interacted);
+        }
+        for (Map.Entry<Team, BaseSpot> entry : teams.entrySet()) {
+            entry.getValue().setOwner(entry.getKey());
+            interactedSpots.get(entry.getValue()).regenerate(entry.getKey());
+        }
     }
 
     private void gameTick() {
@@ -115,7 +125,7 @@ public class GameArena implements Listener {
         for (AbstractGameSpot value : spots.values()) {
             for (SpawnPointAbstract spawnPoint : value.getItemsPoints()) {
                 spawnPoint.stop();
-                if(spawnPoint instanceof Listener) {
+                if (spawnPoint instanceof Listener) {
                     HandlerList.unregisterAll((Listener) spawnPoint);
                 }
             }
@@ -170,6 +180,7 @@ public class GameArena implements Listener {
         }
         players.put(gamer, team);
         gamer.setTeam(team);
+        team.join(gamer);
         return new Result(true, LangCode.SUCCESS);
     }
 
@@ -181,6 +192,7 @@ public class GameArena implements Listener {
         }
         players.put(gamer, null);
         gamer.setTeam(null);
+        team.leave(gamer);
         return new Result(true, LangCode.SUCCESS);
     }
 
@@ -191,6 +203,18 @@ public class GameArena implements Listener {
             }
         }
         return null;
+    }
+
+    @Nullable
+    public Gamer tryGetGamer(@Nullable Entity entity) {
+        if (!(entity instanceof Player)) {
+            return null;
+        }
+        return tryGetGamer((Player) entity);
+    }
+
+    public Gamer tryGetGamer(Player player) {
+        return gameCore.tryGetGamer(player);
     }
 
     public Result addConnections(String spot1, String spot2) {
@@ -267,9 +291,27 @@ public class GameArena implements Listener {
         return arenaLobby;
     }
 
-    public void gameSpotDestroyed(AbstractGameSpot gameSpot) {
+    public void gameSpotDestroyed(AbstractGameSpot destroyedSpot) {
         connectionsChanges();
-        broadcastToPlayers(gameSpot.getName() + " сломан");
+        broadcastToPlayers(destroyedSpot.getName() + " сломан");
+        if (destroyedSpot instanceof BaseSpot && destroyedSpot.getOwner() != null) {
+            BaseSpot baseSpot = teams.get(destroyedSpot.getOwner());
+            if (baseSpot == null) {
+                throw new IllegalArgumentException("Team don't have a BaseSpot");
+            }
+            if (baseSpot.equals(destroyedSpot)) {
+                teamLost(destroyedSpot.getOwner());
+            }
+        }
+    }
+
+    private void teamLost(Team team) {
+        for (Gamer gamer : team.getGamers()) {
+            Player player = gamer.getPlayer();
+            player.teleport(arenaLobby);
+            Util.normalizePlayer(player);
+        }
+        broadcastToPlayers(team.getName() + " проиграли");
     }
 
     private void connectionsChanges() {
@@ -340,6 +382,5 @@ public class GameArena implements Listener {
     public HashMap<Team, BaseSpot> getTeams() {
         return teams;
     }
-
 
 }

@@ -1,10 +1,10 @@
 package ru.logonik.unrealminecraft.arenasmodels;
 
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.SlimeSplitEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -12,12 +12,11 @@ import ru.logonik.unrealminecraft.models.GameArena;
 import ru.logonik.unrealminecraft.models.Gamer;
 import ru.logonik.unrealminecraft.models.Team;
 
-import java.util.Objects;
-
-public class SlimeInteractGameSpot implements Listener {
-    private final AbstractGameSpot gameSpot;
-    private final GameArena arena;
-    private Slime slime;
+public abstract class SlimeInteractGameSpot implements Listener {
+    protected final AbstractGameSpot gameSpot;
+    protected final GameArena arena;
+    protected Slime slime;
+    protected Slime lastSlime;
 
 
     public SlimeInteractGameSpot(AbstractGameSpot gameSpot, GameArena arena) {
@@ -25,35 +24,36 @@ public class SlimeInteractGameSpot implements Listener {
         this.arena = arena;
     }
 
-    public void regenerate(Team team) {
-        Objects.requireNonNull(team);
-        gameSpot.setOwner(team);
+    public abstract void regenerate(Team team);
+    public abstract boolean tryRegenerate(Team team);
 
-        final Location location = gameSpot.getLocation();
-        if (slime != null) {
-            slime.setHealth(0);
+    @EventHandler
+    public void onTakeDamage(EntityDamageByEntityEvent e) {
+        if (e.getEntity().getUniqueId().equals(slime.getUniqueId())) {
+            Gamer gamer = arena.tryGetGamer(e.getDamager());
+            if (gamer == null) {
+                return;
+            }
+            if(gamer.getTeam().equals(gameSpot.getOwner())) {
+                e.setCancelled(true);
+            }
         }
-        slime = (Slime) location.getWorld().spawnEntity(location, EntityType.SLIME);
-        slime.setSize(4);
-        slime.setAI(false);
-        slime.setSilent(true);
-        slime.setCustomName(team.getName());
-        arena.gameSpotGenerated(gameSpot);
     }
 
     @EventHandler
     public void onSlimeDeath(EntityDeathEvent e) {
         if (slime == null) return;
         if (e.getEntity().getUniqueId().equals(slime.getUniqueId())) {
-            gameSpot.setOwner(null);
             arena.gameSpotDestroyed(gameSpot);
+            gameSpot.setOwner(null);
         }
     }
 
     @EventHandler
     public void onSlimeSplits(SlimeSplitEvent e) {
         if (slime == null) return;
-        if (e.getEntity().getUniqueId().equals(slime.getUniqueId())) {
+        if (e.getEntity().getUniqueId().equals(slime.getUniqueId())
+                || e.getEntity().getUniqueId().equals(lastSlime.getUniqueId())) {
             slime = null;
             e.setCancelled(true);
         }

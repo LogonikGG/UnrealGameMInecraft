@@ -51,7 +51,7 @@ public class GameArena implements Listener {
         for (Gamer gamer : players.keySet()) {
             final Player player = gamer.getPlayer();
             player.teleport(getRespawnLocation(gamer));
-            player.sendMessage("СТАРТ");
+            player.sendMessage("Игра была запущена");
             Util.normalizePlayer(player);
         }
         gameTickTask = gameCore.getPlugin().getServer().getScheduler().runTaskTimer(gameCore.getPlugin(), this::gameTick, 2, 1);
@@ -116,11 +116,9 @@ public class GameArena implements Listener {
     private void stop() {
         for (Gamer gamer : players.keySet()) {
             final Player player = gamer.getPlayer();
+            Util.normalizePlayer(player);
             player.teleport(gameCore.getLobby());
-            player.sendMessage("STOP");
-            player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
-            player.setSaturation(5);
-            player.setFoodLevel(20);
+            player.sendMessage("Игра была остановлена");
         }
         for (AbstractGameSpot value : spots.values()) {
             for (SpawnPointAbstract spawnPoint : value.getItemsPoints()) {

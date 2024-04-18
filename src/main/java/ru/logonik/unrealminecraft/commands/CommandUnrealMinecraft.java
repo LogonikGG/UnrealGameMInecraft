@@ -6,10 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.util.StringUtil;
 import ru.logonik.unrealminecraft.Plugin;
-import ru.logonik.unrealminecraft.commands.subcommands.ChooseTeam;
-import ru.logonik.unrealminecraft.commands.subcommands.Creater;
-import ru.logonik.unrealminecraft.commands.subcommands.JoinArena;
-import ru.logonik.unrealminecraft.commands.subcommands.StartGame;
+import ru.logonik.unrealminecraft.commands.subcommands.*;
 import ru.logonik.unrealminecraft.models.Result;
 
 import java.util.ArrayList;
@@ -34,6 +31,7 @@ public class CommandUnrealMinecraft implements CommandExecutor, TabCompleter {
         commands.put("join", new JoinArena(plugin));
         commands.put("team", new ChooseTeam(plugin));
         commands.put("start", new StartGame(plugin));
+        commands.put("stop", new StopGame(plugin));
         commands.put("creater", new Creater(plugin));
     }
 

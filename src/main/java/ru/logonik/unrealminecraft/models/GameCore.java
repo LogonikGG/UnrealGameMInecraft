@@ -137,6 +137,12 @@ public class GameCore implements Listener {
         return new GameCore(plugin).new GameCoreBuilder();
     }
 
+    public void stopAllGames() {
+        for (GameArena arena : arenas.values()) {
+            arena.stopGame();
+        }
+    }
+
     public class GameCoreBuilder {
         private GameCoreBuilder() {
 

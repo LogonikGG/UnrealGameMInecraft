@@ -53,6 +53,7 @@ public final class Plugin extends JavaPlugin {
     @Override
     public void onDisable() {
         if (gameCore != null) {
+            gameCore.stopAllGames();
             saver.save(gameCore);
         }
     }
